@@ -3,9 +3,13 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/garyburd/redigo/redis"
 )
+
+// Provided by Dockerfile
+var redisNetwork = os.Getenv("REDIS_NETWORK")
 
 func main() {
 
@@ -16,6 +20,7 @@ func main() {
 	}
 }
 
+// homeHandler increments a Redis counter and returns its result to the caller
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	c, err := redis.Dial("tcp", "redis_1:6379")
