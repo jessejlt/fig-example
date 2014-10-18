@@ -1,6 +1,12 @@
+redis:
+  image: redis:2.8.9
+  ports:
+    - 6379
 web:
   build: .
   volumes:
-    - /Users/jesse/go/src/github.com/jessejlt/fig-example:/usr/src/app
+    - .:/usr/src/app
   ports:
     - "8080:8080"
+  links:
+    - redis
