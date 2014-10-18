@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/garyburd/redigo/redis"
 )
 
 func main() {
@@ -15,5 +17,22 @@ func main() {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
+
+	c, err := redis.Dial("tcp", "redis_1:6379")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	defer c.Close()
+
+	n, err := redis.Int(c.Do("INCR", "cons"))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Connections: %d\n", n)
 }
